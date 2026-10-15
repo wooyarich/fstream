@@ -1,0 +1,169 @@
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>FStream Help: Preferences</title>
+        <meta name="AppleTitle" content="FStream Help">
+        <meta name="robots" content="index">
+        <meta name="copyright" content="Copyright 2005-2014 SourceMac.">
+        <link href="../styles/def.css" rel="stylesheet" media="all">
+        <meta name="keywords" content="preference, misc, miscellaneous, apple, remote, controller, info, encoding, buffer, update, shift, information, tag, scrolling, record, format, bitrate, quality, time, shifting, skin, yellow, blue, event, events, growl, log, speech, spoken, connection, socks, SOCKSV4, SOCKSV5, SOCKS4, SOCKS5, proxy">
+        <meta name="description" content="Preferences of FStream">
+    </head>
+
+    <body>
+
+        <table border="0" cellpadding="0" cellspacing="0">
+            <tr>
+                <td valign="top">
+                    <table border="0" cellpadding="10" cellspacing="0" width="154">
+                        <tr>
+                            <td>
+                                <center><img src="../medias/FStream.png"></center>
+                                <p class="side">
+                                    &#187;&nbsp;<a href="pgInterface.html">Interface</a><br>
+                                    &#187;&nbsp;<a href="pgKeys.html">Modifier keys</a><br>
+                                    &#187;&nbsp;<a href="pgRecording.html">Recording</a><br>
+                                    &#187;&nbsp;<a href="pgManager.html">Streams Manager</a><br>
+                                    &#187;&nbsp;<a href="pgQuickOpen.html">Quick Open</a><br>
+                                    &#187;&nbsp;<a href="pgPreferences.html">Preferences</a><br>
+                                    &#187;&nbsp;<a href="pgMisc.html">Miscellaneous</a><br>
+                                    &#187;&nbsp;<a href="pgDevelopers.html">Developers</a><br>
+                                    &#187;&nbsp;<a href="pgHistory.html">History</a><br>
+                                    &#187;&nbsp;<a href="pgAbouts.html">Information &amp; Credits</a><br>
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                
+                <td width="2" bgcolor="#dddddd">
+                </td>
+                <td valign="top">
+                    <div id="pagetitle">
+                        <h1>Preferences</h1>
+                    </div>
+                    <p>
+                        FStream is a little software, but there is a lot of customizable things. Here is a description of the preferences.
+                    </p>
+                
+                    <ul>
+                        <li>
+                            <b>Miscellaneous</b>:<br>
+                            
+                            <div id="taskbox">
+                                <ul>
+                                    <li><b>Apple IR Remote Controller</b>: allows you to activate or deactivate the remote control (in exclusive access or not).</li>
+                                    <li><b>Main window</b>: allow to specify if the Main window of FStream should be over the other windows.</li>
+									<li><b>Status menu</b>: allow to show a status menu on the right of your menu-bar to control FStream anywhere.</li>
+                                    <li><b>Update</b>: activate this check-box to allow FStream to check automatically for available updates at program launch. There is also a button which allows you to check for software updates manually if you prefer not to use automatic checking.</li>
+                                </ul>
+                            </div>
+                        </li>
+                        
+                        <li>
+                            <b>Skin</b>:<br>
+                            Allows you to select the FStream main window Skin. See on <a href="http://www.sourcemac.com?page=fstream&subpage=plugin">SourceMac.com</a> to download some skin and know how you can make one.<br>
+                            <div id="taskbox">
+                                <ul>
+                                    <li>To change the skin, just select the skin on the list that you want to use. The informations about the selected skin are showed on the right frame.</li>
+                                </ul>
+                            </div>
+                        </li>
+                    
+                        <li>
+                            <b>Info</b>:<br>
+                            Use this tab to customize the showed informations in the main FStream window.
+                            
+                            <div id="taskbox">
+                                <ul>
+                                    <li><b>Information motion</b> allows you to activate or deactivate the auto-shifting of the informations and activate or deactivate the scrooling motion.</li>
+                                    <li><b>WebRadio informations</b> allows you to choose the character-set encoding of the WebRadio informations, the information to ignore if it contain a specified element (by example "Next :") and change the case of the informations.</li>
+                                    <li><b>iChat</b> allows you to change the iChat status with the Artist and Name of the played song when they change.
+                                </ul>
+                            </div>
+                        </li>
+                        
+                         <li>
+                            <b>Events</b>:<br>
+                            Allows you to catch some FStream events. The events can be sended to the log (you can acces to the window log via the menu Window) and/or to <a href="http://growl.info/">Growl</a>.
+                        </li>
+                        
+                        <li>
+                            <b>Record</b>:<br>
+                            Use this tab to set parameters of recording.
+                            
+                            <div id="taskbox">
+                                <ul>
+                                    <li><b>Record folder</b> button allows you to choose the destination folder for recorded audio files.</li>
+                                    <li><b>Format</b> allows you to choose the audio file format (mp3/aac/aiff/wav).</li>
+                                    <li><b>Quality</b> allows you to specify the bitrate (in kbps) and the algorithm encoding quality for the mp3 recording format. If you want to use the same bitrate that the stream for your record, choose “Auto” in the bitrate menu.</li>
+                                </ul>
+                            </div>
+                        </li>
+                        
+                         <li>
+                            <b>Pause</b>:<br>
+                            Allows you to specify the playing pause behavior.
+                            
+                            <div id="taskbox">
+                                <ul>
+                                    <li><b>Pause (mute playback only)</b>: on this mode, clicking on the Pause button of the controller will stop audio output, and will pause the recording session if there is one in progress. Exiting Pause mode, you will again hear the stream as it is being broadcast (in real-time) and the recording session will run again if there is one in progress.</li>
+                                    <li><b>Pause (silence, stream cached for time shifting)</b>: on this mode, clicking on the Pause button of the controller will cause the audio stream to be recorded to the cache folder (which can be changed with the “Cache folder” button), will stop audio output, and will end the recording session if there is one in progress. Exiting Pause mode will resume playback of the audio stream where you left it, playing from the cache file. Playback is no longer in real-time, and is not in sync with the broadcast stream.<br>The cache is a group of files, each limited to a maximum size of 100 Kb. When a file is no longer in use, it is deleted.</li>
+                                </ul>
+                            </div>
+                        </li>
+                        
+                        
+                        
+                       
+                        
+                        <li>
+                            <b>Speech</b>:<br>
+                            Allows you to configure the Speech Synthesis in FStream.<br>
+                            
+                            <div id="taskbox">
+                                <ul>
+                                    <li>
+                                        <b>Spoken elements</b><br>
+                                        Activating these checkboxes will cause Apple’s Speech Synthesis engine to announce the radio station’s name, and/or announce the name of the song, artist or album when the current song changes, respectively. (The voice used for the announcement can be set in the Speech preference panel [System Preferences > Speech > Text to Speech: System Voice].)
+                                    </li>
+                                    <li>
+                                        <b>Activation speech</b><br>
+                                        <i>'Circumstance'</i> allows you to configure when the speech is triggered : at the web radio loading, or after.<br>
+                                        <i>'Remote control'</i> allows you to activate the speech only when you control FStream via the Apple Remote Control.
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        
+                        <li>
+                            <b>Connection</b>:<br>
+                            Allows you to configure the Internet connection of FStream.
+                            
+                            <div id="taskbox">
+                                <ul>
+                                    <li>
+                                        <b>Buffer</b>:<br>
+                                        The check-box allows you to define the amount by which the stream buffer may drop before FStream reloads the stream. This is useful if streams stop playing after a few seconds.<br>
+                                        The pop-up menu "Buffer size" allows you to specify the cache size (Small for a stable DSL connection, Large for a less stable connection).
+                                    </li>
+									
+									<li>
+                                        <b>Reconnection</b>:<br>
+										Allows you to say to FStream to automatically reconnect a given amount of time, while the connection fail.
+                                    </li>
+                                    
+                                    <li>
+                                        <b>Proxy</b>:<br>
+                                        You have the possibility to use a SOCKS proxy (version 4 or 5) for all FStream Internet connection (by example if you are in a network that request a proxy access to access on Internet).
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                    </ul>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>

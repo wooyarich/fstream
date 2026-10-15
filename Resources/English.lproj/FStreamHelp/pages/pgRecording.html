@@ -1,0 +1,69 @@
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>FStream Help: Recording</title>
+        <meta name="AppleTitle" content="FStream Help">
+        <meta name="robots" content="index">
+        <meta name="copyright" content="Copyright 2005-2014 SourceMac.">
+        <link href="../styles/def.css" rel="stylesheet" media="all">
+        <meta name="keywords" content="record, AIFF, AAC, MP3, file, song, ref, panel">
+        <meta name="description" content="Informations about the record function of FStream">
+    </head>
+
+    <body>
+
+        <table border="0" cellpadding="0" cellspacing="0">
+            <tr>
+                <td valign="top">
+                    <table border="0" cellpadding="10" cellspacing="0" width="154">
+                        <tr>
+                            <td>
+                                <center><img src="../medias/FStream.png"></center>
+                                <p class="side">
+                                    &#187;&nbsp;<a href="pgInterface.html">Interface</a><br>
+                                    &#187;&nbsp;<a href="pgKeys.html">Modifier keys</a><br>
+                                    &#187;&nbsp;<a href="pgRecording.html">Recording</a><br>
+                                    &#187;&nbsp;<a href="pgManager.html">Streams Manager</a><br>
+                                    &#187;&nbsp;<a href="pgQuickOpen.html">Quick Open</a><br>
+                                    &#187;&nbsp;<a href="pgPreferences.html">Preferences</a><br>
+                                    &#187;&nbsp;<a href="pgMisc.html">Miscellaneous</a><br>
+                                    &#187;&nbsp;<a href="pgDevelopers.html">Developers</a><br>
+                                    &#187;&nbsp;<a href="pgHistory.html">History</a><br>
+                                    &#187;&nbsp;<a href="pgAbouts.html">Information &amp; Credits</a><br>
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                
+                <td width="2" bgcolor="#dddddd">
+                </td>
+                <td valign="top">
+                    <div id="pagetitle">
+                        <h1>Recording</h1>
+                    </div>
+                    <p>
+                        FStream have the ability to record the web-radio that you are playing. Here is some explanation about this functionality. 
+                    </p>
+                
+                    <ul>
+                        <li>
+                            <b>Controller appearance</b>:<br>
+                            If a recording session is in progress, the controller will have a light-red background rather than gray, and the symbols will be light gray rather than dark gray.
+                        </li>
+                    
+                        <li>
+                            <b>Buffered recording</b>:<br>
+                            The recording is “buffered”: before being encoded to a file, the audio stream is stored in memory. This prevents audio-data loss while listening because audio encoding can be rather slow. If your computer is fast enough to encode audio data in real-time (data can be encoded as rapidly as it downloads), the indicated time in the info area while in record mode will be accurate, and the buffer will be virtually empty. However, if your computer is too slow, the buffer will continue to be filled (as data is coming in faster than your computer can encode it); your entire system will slow (saturation); the displayed time will lag (which is normal, as it’s displaying the encoding time in the audio file); and when you click to stop the recording session (Stop button), FStream will stop until it finishes encoding the audio data remaining in the buffer. If you find this happens on your system, try lowering the MP3-encoding quality, or choose an uncompressed format like WAV.
+                        </li>
+                        
+                        <li>
+                            <b>Start/stop a record</b>:<br>
+                            You should use the modifier keys. See the section “Modifier keys” on the left.
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>

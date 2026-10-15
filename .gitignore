@@ -1,0 +1,12 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Build artifacts (uncomment if you want to exclude the prebuilt .app bundle)
+# FStream.app/
+*.dSYM/
+*.o
+*.swp
+*~

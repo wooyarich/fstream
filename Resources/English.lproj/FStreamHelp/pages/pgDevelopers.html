@@ -1,0 +1,201 @@
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>FStream Help: Developers</title>
+        <meta name="AppleTitle" content="FStream Help">
+        <meta name="robots" content="index">
+        <meta name="copyright" content="Copyright 2005-2014 SourceMac.">
+        <link href="../styles/def.css" rel="stylesheet" media="all">
+        <meta name="keywords" content="AppleScript, developer, xCode, plug-in, fsradio">
+        <meta name="description" content="Informations for developers">
+    </head>
+
+    <body>
+
+        <table border="0" cellpadding="0" cellspacing="0">
+            <tr>
+                <td valign="top">
+                    <table border="0" cellpadding="10" cellspacing="0" width="154">
+                        <tr>
+                            <td>
+                                <center><img src="../medias/FStream.png"></center>
+                                <p class="side">
+                                    &#187;&nbsp;<a href="pgInterface.html">Interface</a><br>
+                                    &#187;&nbsp;<a href="pgKeys.html">Modifier keys</a><br>
+                                    &#187;&nbsp;<a href="pgRecording.html">Recording</a><br>
+                                    &#187;&nbsp;<a href="pgManager.html">Streams Manager</a><br>
+                                    &#187;&nbsp;<a href="pgQuickOpen.html">Quick Open</a><br>
+                                    &#187;&nbsp;<a href="pgPreferences.html">Preferences</a><br>
+                                    &#187;&nbsp;<a href="pgMisc.html">Miscellaneous</a><br>
+                                    &#187;&nbsp;<a href="pgDevelopers.html">Developers</a><br>
+                                    &#187;&nbsp;<a href="pgHistory.html">History</a><br>
+                                    &#187;&nbsp;<a href="pgAbouts.html">Information &amp; Credits</a><br>
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                
+                <td width="2" bgcolor="#dddddd">
+                </td>
+                <td valign="top">
+                    <div id="pagetitle">
+                        <h1>Developers</h1>
+                    </div>
+                    <p>
+                        FStream have some developers abilities. Here is some help about this functionalities.
+                    </p>
+                
+                    <ul>
+                        <li>
+                            <b>ApppleScript</b><br>
+                            FStream recognize the apple scripting technology : AppleScript.<br>
+                            You can show the complete list of commands <i>via</i> the <b>Script Editor</b> application in your Application folder. You should go on the "File" menu, then "Open Dictionary" and then select "FStream".<br><br>
+                            Here some simple scripts examples :<br><br>
+                            
+                            <b>Start playing the selected webradio in FStream</b>
+                            <div id="taskbox">
+                          	tell application "FStream"<br>
+							    startPlaying<br>
+							end tell
+                            </div>
+                            
+                            <br>
+                            
+                            <b>Stop playing the selected webradio in FStream</b>
+                            <div id="taskbox">
+                          	tell application "FStream"<br>
+							    stopPlaying<br>
+							end tell
+                            </div>
+                            
+                            <br>
+                            
+                            <b>Start a recording session in FStream</b>
+                            <div id="taskbox">
+                          	tell application "FStream"<br>
+							    startRecording<br>
+							end tell
+                            </div>
+                            
+                            <br>
+                            
+                            <b>Stop the recording session in FStream</b>
+                            <div id="taskbox">
+                          	tell application "FStream"<br>
+							    stopRecording<br>
+							end tell
+                            </div>
+                            
+                            <br>
+                            
+                            <b>Get a tree of your favourites webradio</b>
+                            <div id="taskbox">
+                          	tell application "FStream"<br>
+							    treeOfPlaylist<br>
+							end tell
+                            </div>
+                        </li>
+                    	<br>
+                        <li>
+                            <b>PlugIns</b>:<br>
+                            FStream recognize PlugIns to extend its functionalities.<br>
+							For the moment, only skin are recognized by FStream. Skins are interfaces PlugIns that allow to change the default main window style.
+							You can build skin with Xcode in Objective-C or in XML with your favourite XML editor. You can donwload examples at this <a href="http://www.sourcemac.com/?page=fstream&subpage=plugin">page</a>.
+                        </li>
+						
+						<br>
+                        <li>
+                            <b>fsradio</b>:<br>
+                            FStream recognize a special URL scheme : "fsradio".<br>
+							With this kind of URL, FStream can be directly used to load a radio, in all kind of application that recognize extended scheme.<br>
+							The URL can be composed only of the stream URL of the webradio to load, or composed of the stream URL and the stream name separated with a "_" character.<br>
+							The name is in UTF8 format, and the two items are encoded in base64.<br>
+							<br>
+							Here some examples :<br>
+							<a href="fsradio://aHR0cDovL3d3dy5zb3VyY2VtYWMuY29tL2ZzdHJlYW0ucGhwP3Bscz0y_RnLDqXF1ZW5jZSAz">fsradio://aHR0cDovL3d3dy5zb3VyY2VtYWMuY29tL2ZzdHJlYW0ucGhwP3Bscz0y_RnLDqXF1ZW5jZSAz</a> for "Fréquence 3".<br>
+							<a href="fsradio://aHR0cDovL3d3dy5zb3VyY2VtYWMuY29tL2ZzdHJlYW0ucGhwP3Bscz00_T1XDryBGTQ==">fsradio://aHR0cDovL3d3dy5zb3VyY2VtYWMuY29tL2ZzdHJlYW0ucGhwP3Bscz00_T1XDryBGTQ==</a> for "OUÏ FM".<br>
+							<a href="fsradio://aHR0cDovL3d3dy5zb3VyY2VtYWMuY29tL2ZzdHJlYW0ucGhwP3Bscz0xMw==_TGEgR3Jvc3NlIFJhZGlv">fsradio://aHR0cDovL3d3dy5zb3VyY2VtYWMuY29tL2ZzdHJlYW0ucGhwP3Bscz0xMw==_TGEgR3Jvc3NlIFJhZGlv</a> for "La Grosse Radio".<br>
+							<a href="fsradio://aHR0cDovL3d3dy5zb3VyY2VtYWMuY29tL2ZzdHJlYW0ucGhwP3Bscz0xMg==">fsradio://aHR0cDovL3d3dy5zb3VyY2VtYWMuY29tL2ZzdHJlYW0ucGhwP3Bscz0xMg==</a> for "France Info" without name.<br>
+
+						</li>
+						
+						<br>
+                        <li>
+                            <b>Presets</b>:<br>
+							FStream have an integrated set of preset radios. But it is possible for users to add its list of preset from an external server.
+							
+							Here how to do :<br>
+							<ul>
+								<li>The user make a new entry in preferences, in the "Presets" pannel</li>
+								<li>He indicate the name of the preset. This name can be what he want : this is usefull only for the user.</li>
+								<li>He indicate the preset address.</li>
+							</ul>
+							<br>
+							The preset address should allow to receive a plist of this form:
+							<ul>
+							<div id="taskbox">
+							&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br>
+							&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;<br>
+							&lt;plist version="1.0"&gt;<br>
+							&lt;dict&gt;<br>
+							<br>
+							&nbsp;&nbsp;&nbsp;&lt;key&gt;host&lt;/key&gt;<br>
+							&nbsp;&nbsp;&nbsp;&lt;string&gt;www.sourcemac.com&lt;/string&gt;<br>
+							<br>
+							&nbsp;&nbsp;&nbsp;&lt;key&gt;base&lt;/key&gt;<br>
+							&nbsp;&nbsp;&nbsp;&lt;string&gt;www.sourcemac.com&lt;/string&gt;<br>
+							<br>
+							&nbsp;&nbsp;&nbsp;&lt;key&gt;genre&lt;/key&gt;<br>
+							&nbsp;&nbsp;&nbsp;&lt;string&gt;/fstream_sample.php?action=genre&amp;language=[language]&lt;/string&gt;<br>
+							<br>
+							&nbsp;&nbsp;&nbsp;&lt;key&gt;radio&lt;/key&gt;<br>
+							&nbsp;&nbsp;&nbsp;&lt;string&gt;/fstream_sample.php?action=radio&amp;genre=[genre]&amp;language=[language]&lt;/string&gt;<br>
+							<br>
+							&nbsp;&nbsp;&nbsp;&lt;key&gt;search&lt;/key&gt;<br>
+							&nbsp;&nbsp;&nbsp;&lt;string&gt;/fstream_sample.php?action=search&amp;search=[search]&amp;language=[language]&lt;/string&gt;<br>
+							<br>
+							&lt;/dict&gt;<br>
+							&lt;/plist&gt;<br>
+							</div>
+							</ul>
+							
+							<ul>
+								<li>The key "genre" contain the genre list page generator address. In this address, it is possible possible to use the tag <i>[language]</i> that will be replaced by the current language code.</i>
+								<li>The key "radio" contain the radio list page address, generated from the selected genre. In this address, it is possible to use the tag <i>[language]</i> and the tag <i>[genre]</i> that will be replaced by the genre identifier selected by the user.</li>
+								<li>The key "search" contain the radio list page address, generated from a research keyword. In this address, it is possible to use the tag <i>[language]</i> and the tag <i>[search]</i> that will be replaced by the keyword that the user entered in the search field.</li>
+							</ul>
+							<br>
+							<br>
+							The format returned by the server should be the following :
+							<ul>
+								<li>The data returned should be continuous (and not by block) and no encrypted</li>
+								<li>The data should be encoded in UTF-8</li>
+								<li>This special characters should be replaced :</li>
+									<div id="taskbox">&nbsp;"<b>&#60;</b>" become "<b>&amp;#60;</b>"</div>
+									<div id="taskbox">&nbsp;"<b>&#62;</b>" become "<b>&amp;#62;</b>"</div>
+									<div id="taskbox">&nbsp;"<b>&#91;</b>" become "<b>&amp;#91;</b>"</div>
+									<div id="taskbox">&nbsp;"<b>&#93;</b>" become "<b>&amp;#93;</b>"</div>
+									<div id="taskbox">&nbsp;"<b>&#36;</b>" become "<b>&amp;#36;</b>"</div>
+							
+								<li>A list is represended like this : </li>
+								<div id="taskbox">
+									[<i>identifier_1</i>$<i>nom_1</i>][<i>identifier_2</i>$<i>nom_2</i>]<i>...</i>
+								</div>
+								The identifier can be what you want, it will replace the tag <i>[genre]</i> in the radio address.
+								
+								<li>A list of radio (via a genre or a search) is represended like this : </li>
+								<div id="taskbox">
+									[<i>name_1</i>$<i>format_1</i>$<i>bitrate_1</i>$<i>url_1</i>][<i>name_2</i>$<i>format_2</i>$<i>bitrate_2</i>$<i>url_2</i>]<i>...</i>
+								</div>
+								The format is a MIME type (audio/mpeg, etc.) and the bitrate is in kbps.
+							</ul>
+							<br>
+							The script of the sample preset can be downloaded <a href="http://www.sourcemac.com/fstream_sample.php?action=source">here</a>.
+						</li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>

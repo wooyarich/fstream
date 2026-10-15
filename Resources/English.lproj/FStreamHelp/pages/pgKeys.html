@@ -1,0 +1,112 @@
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>FStream Help: Modifier keys</title>
+        <meta name="AppleTitle" content="FStream Help">
+        <meta name="robots" content="index">
+        <meta name="copyright" content="Copyright 2005-2014 SourceMac.">
+        <link href="../styles/def.css" rel="stylesheet" media="all">
+        <meta name="keywords" content="behaviour, play panel, record panel, panel, play, record, reload, key, controller, simulate, shift, option">
+        <meta name="description" content="Behaviours modifier keys">
+    </head>
+
+    <body>
+
+        <table border="0" cellpadding="0" cellspacing="0">
+            <tr>
+                <td valign="top">
+                    <table border="0" cellpadding="10" cellspacing="0" width="154">
+                        <tr>
+                            <td>
+                                <center><img src="../medias/FStream.png"></center>
+                                <p class="side">
+                                    &#187;&nbsp;<a href="pgInterface.html">Interface</a><br>
+                                    &#187;&nbsp;<a href="pgKeys.html">Modifier keys</a><br>
+                                    &#187;&nbsp;<a href="pgRecording.html">Recording</a><br>
+                                    &#187;&nbsp;<a href="pgManager.html">Streams Manager</a><br>
+                                    &#187;&nbsp;<a href="pgQuickOpen.html">Quick Open</a><br>
+                                    &#187;&nbsp;<a href="pgPreferences.html">Preferences</a><br>
+                                    &#187;&nbsp;<a href="pgMisc.html">Miscellaneous</a><br>
+                                    &#187;&nbsp;<a href="pgDevelopers.html">Developers</a><br>
+                                    &#187;&nbsp;<a href="pgHistory.html">History</a><br>
+                                    &#187;&nbsp;<a href="pgAbouts.html">Information &amp; Credits</a><br>
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                
+                <td width="2" bgcolor="#dddddd">
+                </td>
+                <td valign="top">
+                    <div id="pagetitle">
+                        <h1>Modifier keys</h1>
+                    </div>
+                    <p>
+                        Modifier keys allows you to modify the default FStream behavior, as described below. 
+                    </p>
+                
+                    <ul>
+                        <li>
+                            <b>Play panel (no key)</b>:<br>
+                            FStream display is in standard mode (audio stream playing).
+                            <div id="taskbox">
+                                <ul>
+                                    <li>The info area shows the information described int the Interface section.</li>
+                                    <li>
+                                        The controller can show:
+                                        <ul>
+                                            <li>A “Play” symbol (arrow), meaning that either there is no loaded stream, or that the current stream is paused. Clicking on it either will load the selected web radio (from the Streams List), or will resume play of the paused stream.</li>
+                                            <li>A “Pause” symbol (double bar), meaning that a web radio stream is loaded and playing. Clicking on it will pause playback of the stream (see the different pause modes in the Preferences section).</li>
+                                            <li>A wave symbol means that FStream is loading a radio stream.</li>
+                                        </ul>
+                                    </li>
+                                    <li>The main window shows a yellow background.</li>
+                                </ul>
+                            </div>
+                        </li>
+                        
+                        <li>
+                            <b>Record panel (Shift key)</b>:<br>
+                            Accesses FStream’s record mode.
+                            <div id="taskbox">
+                                <ul>
+                                    <li>The info area shows the length of the current recording session in hhh:mm:ss format.</li>
+                                    <li>
+                                        The controller will show either:
+                                        <ul>
+                                            <li>A “Record” symbol (circle), meaning either that there is no current recording session, or that the recording session is paused. Clicking on it either will start a new recording session (creating a new file at the location set in Preferences > “Record” tab > “Record folder” button) and reset the counter, or will resume the paused recording session.</li>
+                                            <li>A “Pause” symbol (double bar), meaning that FStream is recording the audio output. Clicking on it will pause the recording session.</li>
+                                        </ul>
+                                    </li>
+                                    <li>The main window shows a light-red background.</li>
+                                </ul>
+                            </div>
+                        </li>
+                        
+                        <li>
+                            <b>Stop play/record (Option key)</b>:<br>
+                            <div id="taskbox">
+                                <ul>
+                                    <li>If you are in play mode (Shift key not pressed), and a stream is loaded, the controller will show a “Stop” symbol (square). Clicking on it will stop the loaded stream.</li>
+                                    <li>If you are in record mode (Shift key pressed), and a recording session is in progress, the controller will show a “Stop” symbol (square). Clicking on it will just stop the recording session and close the recorded audio file.</li>
+                                </ul>
+                            </div>
+                        </li>
+                        
+                        <li>
+                            <b>Reload current stream ("r" key)</b>:<br>
+                            If an audio stream is loading or is loaded, the controller will show a “Reloading” symbol (3/4 of a circle with an arrow). Clicking on it will reload the stream.
+                        </li>
+                        
+                        <li>
+                            <b>Simulate controller click (Space bar)</b>:<br>
+                            To simulate a click on the controller, just press the space bar.
+                        </li>
+                        
+                    </ul>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
