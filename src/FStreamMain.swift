@@ -1865,12 +1865,7 @@ final class FStreamController: NSObject, NSApplicationDelegate, NSMenuDelegate, 
         window.acceptsMouseMovedEvents = true
         window.isReleasedWhenClosed = false
 
-        if let savedX = UserDefaults.standard.object(forKey: "winCoordX") as? Double,
-           let savedY = UserDefaults.standard.object(forKey: "winCoordY") as? Double {
-            window.setFrameOrigin(NSMakePoint(savedX, savedY))
-        } else {
-            window.center()
-        }
+        positionWindowSafely()
 
         if UserDefaults.standard.bool(forKey: "prefsMiscWinAbove") {
             window.level = .floating
@@ -1895,6 +1890,10 @@ final class FStreamController: NSObject, NSApplicationDelegate, NSMenuDelegate, 
             self?.fsView.needsDisplay = true
         }
         NotificationCenter.default.addObserver(forName: NSApplication.didResignActiveNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.fsView.needsDisplay = true
+        }
+        NotificationCenter.default.addObserver(forName: NSApplication.didChangeScreenParametersNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.positionWindowSafely()
             self?.fsView.needsDisplay = true
         }
 
@@ -1936,7 +1935,68 @@ final class FStreamController: NSObject, NSApplicationDelegate, NSMenuDelegate, 
         }
     }
 
+    private func defaultTopLeftOrigin() -> NSPoint {
+        let winSize = NSSize(width: FSView.winWidth, height: FSView.winHeight)
+        let targetScreen = NSScreen.main ?? NSScreen.screens.first
+        let vis = targetScreen?.visibleFrame ?? NSRect(x: 0, y: 0, width: 1200, height: 800)
+        let x = vis.minX + 24.0
+        let y = max(vis.minY, vis.maxY - winSize.height - 24.0)
+        return NSPoint(x: x, y: y)
+    }
+
+    private func positionWindowSafely(forceDefaultTopLeft: Bool = false) {
+        let winSize = NSSize(width: FSView.winWidth, height: FSView.winHeight)
+        let defOrigin = defaultTopLeftOrigin()
+
+        if forceDefaultTopLeft {
+            window.setFrameOrigin(defOrigin)
+            UserDefaults.standard.set(Double(defOrigin.x), forKey: "winCoordX")
+            UserDefaults.standard.set(Double(defOrigin.y), forKey: "winCoordY")
+            return
+        }
+
+        guard let savedX = UserDefaults.standard.object(forKey: "winCoordX") as? Double,
+              let savedY = UserDefaults.standard.object(forKey: "winCoordY") as? Double else {
+            // 최초 실행: 화면 좌측 상단에 배치
+            window.setFrameOrigin(defOrigin)
+            UserDefaults.standard.set(Double(defOrigin.x), forKey: "winCoordX")
+            UserDefaults.standard.set(Double(defOrigin.y), forKey: "winCoordY")
+            return
+        }
+
+        let candidateOrigin = NSPoint(x: savedX, y: savedY)
+        let candidateRect = NSRect(origin: candidateOrigin, size: winSize)
+
+        // 현재 연결된 화면들 중 최소 60x30 이상 교차하여 실제로 보이는지 검사
+        var isVisibleOnAnyScreen = false
+        for screen in NSScreen.screens {
+            let intersection = candidateRect.intersection(screen.visibleFrame)
+            if !intersection.isNull && intersection.width >= 60.0 && intersection.height >= 30.0 {
+                isVisibleOnAnyScreen = true
+                break
+            }
+        }
+
+        if isVisibleOnAnyScreen {
+            window.setFrameOrigin(candidateOrigin)
+        } else {
+            // 외장 모니터 분리 등으로 화면 밖으로 벗어난 경우: 현재 활성 화면의 좌측 상단으로 이동
+            window.setFrameOrigin(defOrigin)
+            UserDefaults.standard.set(Double(defOrigin.x), forKey: "winCoordX")
+            UserDefaults.standard.set(Double(defOrigin.y), forKey: "winCoordY")
+        }
+    }
+
+    @objc func resetWindowPositionToTopLeft() {
+        positionWindowSafely(forceDefaultTopLeft: true)
+        window.orderFrontRegardless()
+        window.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+        fsView.needsDisplay = true
+    }
+
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        positionWindowSafely()
         window.makeKeyAndOrderFront(nil)
         return true
     }
@@ -2245,6 +2305,12 @@ final class FStreamController: NSObject, NSApplicationDelegate, NSMenuDelegate, 
         autoPlayItem.state = UserDefaults.standard.bool(forKey: "autoPlayOnLaunch") ? .on : .off
         skinMenu.addItem(autoPlayItem)
 
+        skinMenu.addItem(.separator())
+
+        let resetPosItem = NSMenuItem(title: "창 위치를 화면 좌측 상단으로 이동", action: #selector(resetWindowPositionToTopLeft), keyEquivalent: "")
+        resetPosItem.target = self
+        skinMenu.addItem(resetPosItem)
+
         let skinParent = NSMenuItem(title: "모양새 및 설정", action: nil, keyEquivalent: "")
         skinParent.submenu = skinMenu
         menu.addItem(skinParent)
@@ -2267,6 +2333,7 @@ final class FStreamController: NSObject, NSApplicationDelegate, NSMenuDelegate, 
     }
 
     @objc private func bringMainWindowToFront() {
+        positionWindowSafely()
         window.orderFrontRegardless()
         window.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
