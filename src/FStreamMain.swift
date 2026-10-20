@@ -1529,13 +1529,25 @@ final class FSText {
         let s = plugin.size(withID: 4)
         return NSMakeRect(p.x, p.y, s.width, s.height)
     }
-
     private func centerRect(for text: String, attributes: [NSAttributedString.Key: Any], inRect: NSRect, dx: Int, dy: Int) -> NSRect {
         let sz = (text as NSString).size(withAttributes: attributes)
+        let font = (attributes[.font] as? NSFont) ?? NSFont.systemFont(ofSize: 12.0)
+
+        // 왼쪽 재생/정지 버튼(ID 1)의 정확한 세로 중심선(Y축 기준) 계산
+        let buttonPos = plugin.position(withID: 1)
+        let buttonSize = plugin.size(withID: 1)
+        let buttonCenterY = (buttonSize.height > 0) ? (buttonPos.y + buttonSize.height * 0.5) : inRect.midY
+
+        // 폰트의 실제 글자 시각적 중심(capHeight 기준)을 버튼 세로 중심과 정확히 일치시키는 광학 중심 보정
+        let glyphOpticalCenter = -font.descender + (font.capHeight * 0.5)
+        let targetY = buttonCenterY - glyphOpticalCenter + CGFloat(dy)
+
+        // Retina(0.5pt) 및 일반 디스플레이 서브픽셀 정렬 반올림
+        let y = round(targetY * 2.0) / 2.0
         let x = inRect.origin.x + CGFloat(dx)
-        let y = floor(inRect.origin.y + (inRect.size.height - sz.height) * 0.5 + CGFloat(dy))
         return NSMakeRect(x, y, ceil(sz.width) + 2.0, ceil(sz.height))
     }
+
 
     func draw() {
         let attrs = plugin.style(withID: 0)
@@ -1801,8 +1813,18 @@ final class FSView: NSView {
             let pos = plugin.position(withID: 5)
             let box = plugin.size(withID: 5)
             let sz = (pctStr as NSString).size(withAttributes: attrs)
-            let y = floor(pos.y + (box.height - sz.height) * 0.5)
-            let r = NSMakeRect(pos.x, y, box.width, ceil(sz.height))
+
+            // FSText와 동일하게 왼쪽 재생/정지 버튼(ID 1)의 세로 중심선에 광학 중심(capHeight)을 정확히 일치시킵니다
+            let font = (attrs[.font] as? NSFont) ?? NSFont.systemFont(ofSize: 12.0)
+            let buttonPos = plugin.position(withID: 1)
+            let buttonSize = plugin.size(withID: 1)
+            let buttonCenterY = (buttonSize.height > 0) ? (buttonPos.y + buttonSize.height * 0.5) : (pos.y + box.height * 0.5)
+            let glyphOpticalCenter = -font.descender + (font.capHeight * 0.5)
+            let y = round((buttonCenterY - glyphOpticalCenter) * 2.0) / 2.0
+
+            // 40pt 폭의 영역 안에서 가로 중앙 정렬
+            let x = round(pos.x + (box.width - sz.width) * 0.5)
+            let r = NSMakeRect(x, y, ceil(sz.width) + 2.0, ceil(sz.height))
             (pctStr as NSString).draw(with: r, options: [.usesLineFragmentOrigin], attributes: attrs)
         }
 
