@@ -1529,6 +1529,7 @@ final class FSText {
         let s = plugin.size(withID: 4)
         return NSMakeRect(p.x, p.y, s.width, s.height)
     }
+
     private func centerRect(for text: String, attributes: [NSAttributedString.Key: Any], inRect: NSRect, dx: Int, dy: Int) -> NSRect {
         let sz = (text as NSString).size(withAttributes: attributes)
         let font = (attributes[.font] as? NSFont) ?? NSFont.systemFont(ofSize: 12.0)
@@ -1543,11 +1544,10 @@ final class FSText {
         let targetY = buttonCenterY - glyphOpticalCenter + CGFloat(dy)
 
         // Retina(0.5pt) 및 일반 디스플레이 서브픽셀 정렬 반올림
-        let y = round(targetY * 2.0) / 2.0
+        let y = round(targetY * 2.0) / 2.0 - 1
         let x = inRect.origin.x + CGFloat(dx)
         return NSMakeRect(x, y, ceil(sz.width) + 2.0, ceil(sz.height))
     }
-
 
     func draw() {
         let attrs = plugin.style(withID: 0)
@@ -1820,7 +1820,7 @@ final class FSView: NSView {
             let buttonSize = plugin.size(withID: 1)
             let buttonCenterY = (buttonSize.height > 0) ? (buttonPos.y + buttonSize.height * 0.5) : (pos.y + box.height * 0.5)
             let glyphOpticalCenter = -font.descender + (font.capHeight * 0.5)
-            let y = round((buttonCenterY - glyphOpticalCenter) * 2.0) / 2.0
+            let y = round((buttonCenterY - glyphOpticalCenter) * 2.0) / 2.0 - 1
 
             // 40pt 폭의 영역 안에서 가로 중앙 정렬
             let x = round(pos.x + (box.width - sz.width) * 0.5)
