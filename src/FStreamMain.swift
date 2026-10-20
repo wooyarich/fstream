@@ -1838,6 +1838,8 @@ final class FStreamController: NSObject, NSApplicationDelegate, NSMenuDelegate, 
     private var reconnectTimer: Timer?
     private var shouldAutoResume: Bool = false
     private var isSystemSleeping: Bool = false
+    private var lastWakeTime: Date = Date.distantPast
+    private var screenParamDebounceTimer: Timer?
     private var watchdogTickCounter: Int = 0
     private var statusItem: NSStatusItem?
 
@@ -1893,8 +1895,7 @@ final class FStreamController: NSObject, NSApplicationDelegate, NSMenuDelegate, 
             self?.fsView.needsDisplay = true
         }
         NotificationCenter.default.addObserver(forName: NSApplication.didChangeScreenParametersNotification, object: nil, queue: .main) { [weak self] _ in
-            self?.positionWindowSafely()
-            self?.fsView.needsDisplay = true
+            self?.handleScreenParametersChanged()
         }
 
         if CommandLine.arguments.contains("--autoplay") || UserDefaults.standard.bool(forKey: "autoPlayOnLaunch") {
@@ -1907,6 +1908,8 @@ final class FStreamController: NSObject, NSApplicationDelegate, NSMenuDelegate, 
         wsCenter.addObserver(forName: NSWorkspace.willSleepNotification, object: nil, queue: .main) { [weak self] _ in
             guard let self = self else { return }
             self.isSystemSleeping = true
+            self.screenParamDebounceTimer?.invalidate()
+            self.screenParamDebounceTimer = nil
             self.watchdogTickCounter = 0
             self.reconnectTimer?.invalidate()
             self.reconnectTimer = nil
@@ -1918,12 +1921,26 @@ final class FStreamController: NSObject, NSApplicationDelegate, NSMenuDelegate, 
         wsCenter.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main) { [weak self] _ in
             guard let self = self else { return }
             self.isSystemSleeping = false
+            self.lastWakeTime = Date()
             self.watchdogTickCounter = 0
             self.soundEngine.lastDataReceivedAt = Date()
+            self.handleScreenParametersChanged()
             guard self.shouldAutoResume else { return }
             self.fsText.setSingleStatus("연결중")
             self.fsView.needsDisplay = true
             self.scheduleAutoReconnect(after: 2.5)
+        }
+    }
+
+    private func handleScreenParametersChanged() {
+        guard !isSystemSleeping else { return }
+        screenParamDebounceTimer?.invalidate()
+        let isRecentlyWoken = Date().timeIntervalSince(lastWakeTime) < 3.5
+        let delay: TimeInterval = isRecentlyWoken ? 3.0 : 0.8
+        screenParamDebounceTimer = Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { [weak self] _ in
+            guard let self = self, !self.isSystemSleeping else { return }
+            self.positionWindowSafely(isUserInitiated: false)
+            self.fsView.needsDisplay = true
         }
     }
 
@@ -1944,7 +1961,7 @@ final class FStreamController: NSObject, NSApplicationDelegate, NSMenuDelegate, 
         return NSPoint(x: x, y: y)
     }
 
-    private func positionWindowSafely(forceDefaultTopLeft: Bool = false) {
+    private func positionWindowSafely(isUserInitiated: Bool = false, forceDefaultTopLeft: Bool = false) {
         let winSize = NSSize(width: FSView.winWidth, height: FSView.winHeight)
         let defOrigin = defaultTopLeftOrigin()
 
@@ -1957,7 +1974,7 @@ final class FStreamController: NSObject, NSApplicationDelegate, NSMenuDelegate, 
 
         guard let savedX = UserDefaults.standard.object(forKey: "winCoordX") as? Double,
               let savedY = UserDefaults.standard.object(forKey: "winCoordY") as? Double else {
-            // 최초 실행: 화면 좌측 상단에 배치
+            // 최초 실행: 화면 좌측 상단에 배치하고 저장
             window.setFrameOrigin(defOrigin)
             UserDefaults.standard.set(Double(defOrigin.x), forKey: "winCoordX")
             UserDefaults.standard.set(Double(defOrigin.y), forKey: "winCoordY")
@@ -1980,15 +1997,19 @@ final class FStreamController: NSObject, NSApplicationDelegate, NSMenuDelegate, 
         if isVisibleOnAnyScreen {
             window.setFrameOrigin(candidateOrigin)
         } else {
-            // 외장 모니터 분리 등으로 화면 밖으로 벗어난 경우: 현재 활성 화면의 좌측 상단으로 이동
+            // 외장 모니터 분리 또는 일시적 저해상도 전환 시:
+            // 창은 화면 안(좌측 상단)으로 보이게 이동시키되,
+            // 사용자가 저장해 둔 본래 고해상도 좌표는 덮어쓰지 않고 보존합니다.
             window.setFrameOrigin(defOrigin)
-            UserDefaults.standard.set(Double(defOrigin.x), forKey: "winCoordX")
-            UserDefaults.standard.set(Double(defOrigin.y), forKey: "winCoordY")
+            if isUserInitiated {
+                UserDefaults.standard.set(Double(defOrigin.x), forKey: "winCoordX")
+                UserDefaults.standard.set(Double(defOrigin.y), forKey: "winCoordY")
+            }
         }
     }
 
     @objc func resetWindowPositionToTopLeft() {
-        positionWindowSafely(forceDefaultTopLeft: true)
+        positionWindowSafely(isUserInitiated: true, forceDefaultTopLeft: true)
         window.orderFrontRegardless()
         window.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
@@ -1996,7 +2017,7 @@ final class FStreamController: NSObject, NSApplicationDelegate, NSMenuDelegate, 
     }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        positionWindowSafely()
+        positionWindowSafely(isUserInitiated: true)
         window.makeKeyAndOrderFront(nil)
         return true
     }
@@ -2333,7 +2354,7 @@ final class FStreamController: NSObject, NSApplicationDelegate, NSMenuDelegate, 
     }
 
     @objc private func bringMainWindowToFront() {
-        positionWindowSafely()
+        positionWindowSafely(isUserInitiated: true)
         window.orderFrontRegardless()
         window.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
