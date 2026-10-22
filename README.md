@@ -13,6 +13,12 @@
 ## 주요 기능
 
 - **네이티브 Apple Silicon (`arm64`) 지원**: Rosetta 2 없이 최신 macOS에서 가볍고 빠르게 동작
+- **기본 프리셋 방송 제공**:
+  - Sky24 음악방송 (`https://sky24.inlive.co.kr/live/listen.pls`)
+  - 달빛수채화 음악방송 (`https://mysonsol4.inlive.co.kr/live/listen.pls`)
+  - 추억속으로7080 (`https://so0000os.inlive.co.kr/live/listen.pls`)
+- **스페이스바 제어 지원**: 앱이 선택되었거나 창이 활성화된 상태에서 `Space` 키로 재생/일시정지 토글 가능
+- **편리한 주소 입력**: '간단히 연결하기' 및 '즐겨찾기 추가' 다이얼로그에서 복사/붙여넣기(`⌘C`, `⌘V`, `⌘X`, `⌘A`, `⌘Z`) 키 완벽 지원
 - **원본 스킨 완벽 복원**: 원본 `FStream`의 `MyPlugin`에서 추출한 104개의 무손실 스킨 에셋(Blue / Yellow 테마, 재생/일시정지/연결중 파형 애니메이션, 우측 상·하 반원형 메뉴/볼륨 버튼, 부드러운 창 그림자) 탑재
 - **강화된 스트리밍 & 메타데이터 파서**:
   - `.pls`, `.m3u`, `.asx`, `.m3u8` 플레이리스트 및 Shoutcast/Icecast(`ICY 200 OK`, `icy-metaint`) 스트림 지원
@@ -21,6 +27,7 @@
 - **잠자기(Sleep) 복구 후 자동 재연결**:
   - 맥이 잠자기에서 깨어난 후(`NSWorkspace.didWakeNotification`) 및 스트림 무응답 발생 시 자동으로 재연결
   - 모든 소켓·파서·CoreAudio(`AudioFileStream` / `AudioQueue`) 작업을 단일 직렬 큐(`netQueue`)와 세션 ID로 동기화하여 절전 복구 시 스레드 경합 크래시 방지
+  - 맥미니 등의 잠자기 해제 시 모니터 EDID 해상도 재협상 동안 창 위치 보존(디바운스 처리)
 - **아이콘 표시 위치 선택**: 환경설정 및 우클릭 메뉴에서 **독(Dock)에만 표시** 또는 **상단 메뉴바에만 표시** 선택 가능
 
 ## 폴더 구조

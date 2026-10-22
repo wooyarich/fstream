@@ -1647,6 +1647,8 @@ final class FSView: NSView {
     }
 
     override func mouseDown(with event: NSEvent) {
+        window?.makeKeyAndOrderFront(nil)
+        window?.makeFirstResponder(self)
         let pt = convert(event.locationInWindow, from: nil)
         let hit = hitTestElement(at: pt)
         if hit == 1 {
@@ -1747,6 +1749,14 @@ final class FSView: NSView {
         return false
     }
 
+    override func keyDown(with event: NSEvent) {
+        if event.keyCode == 49 || event.characters == " " {
+            controller?.togglePlayStop()
+            return
+        }
+        super.keyDown(with: event)
+    }
+
     private func currentControlButtonImageID() -> Int {
         let state = controller?.streamState ?? .disconnected
         let isDown = (pressedElement == 1 && hoverElement == 1)
@@ -1837,12 +1847,53 @@ final class FSView: NSView {
 final class FSWindows: NSWindow {
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { true }
+
+    override func keyDown(with event: NSEvent) {
+        if event.keyCode == 49 || event.characters == " " {
+            if let ctrl = ((contentView as? FSView)?.controller) {
+                ctrl.togglePlayStop()
+                return
+            }
+        }
+        super.keyDown(with: event)
+    }
+}
+
+// MARK: - FSTextField (NSTextField with Full Command Shortcuts for Modal Dialogs)
+final class FSTextField: NSTextField {
+    override func performKeyEquivalent(with event: NSEvent) -> Bool {
+        if event.type == .keyDown && event.modifierFlags.contains(.command) {
+            let chars = event.charactersIgnoringModifiers?.lowercased() ?? ""
+            switch chars {
+            case "v":
+                if NSApp.sendAction(#selector(NSText.paste(_:)), to: nil, from: self) { return true }
+            case "c":
+                if NSApp.sendAction(#selector(NSText.copy(_:)), to: nil, from: self) { return true }
+            case "x":
+                if NSApp.sendAction(#selector(NSText.cut(_:)), to: nil, from: self) { return true }
+            case "a":
+                if NSApp.sendAction(#selector(NSText.selectAll(_:)), to: nil, from: self) { return true }
+            case "z":
+                let action = event.modifierFlags.contains(.shift) ? Selector(("redo:")) : Selector(("undo:"))
+                if NSApp.sendAction(action, to: nil, from: self) { return true }
+            default:
+                break
+            }
+        }
+        return super.performKeyEquivalent(with: event)
+    }
 }
 
 // MARK: - Main Application Controller (MainManager)
 final class FStreamController: NSObject, NSApplicationDelegate, NSMenuDelegate, FSSoundDelegate {
     let defaultStreamURL = "https://sky24.inlive.co.kr/live/listen.pls"
     let defaultStationName = "Sky24 음악방송"
+
+    let defaultStations: [RadioStation] = [
+        RadioStation(name: "Sky24 음악방송", url: "https://sky24.inlive.co.kr/live/listen.pls"),
+        RadioStation(name: "달빛수채화 음악방송", url: "https://mysonsol4.inlive.co.kr/live/listen.pls"),
+        RadioStation(name: "추억속으로7080", url: "https://so0000os.inlive.co.kr/live/listen.pls")
+    ]
 
     var plugin: MyPlugin!
     var fsText: FSText!
@@ -1918,6 +1969,19 @@ final class FStreamController: NSObject, NSApplicationDelegate, NSMenuDelegate, 
         }
         NotificationCenter.default.addObserver(forName: NSApplication.didChangeScreenParametersNotification, object: nil, queue: .main) { [weak self] _ in
             self?.handleScreenParametersChanged()
+        }
+
+        NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            guard let self = self else { return event }
+            if let firstResponder = NSApp.keyWindow?.firstResponder,
+               firstResponder is NSTextView || firstResponder is NSTextField {
+                return event
+            }
+            if event.keyCode == 49 || event.characters == " " {
+                self.togglePlayStop()
+                return nil
+            }
+            return event
         }
 
         if CommandLine.arguments.contains("--autoplay") || UserDefaults.standard.bool(forKey: "autoPlayOnLaunch") {
@@ -2059,10 +2123,14 @@ final class FStreamController: NSObject, NSApplicationDelegate, NSMenuDelegate, 
            let decoded = try? JSONDecoder().decode([RadioStation].self, from: data),
            !decoded.isEmpty {
             stations = decoded
+            for def in defaultStations {
+                if !stations.contains(where: { $0.url.caseInsensitiveCompare(def.url) == .orderedSame }) {
+                    stations.append(def)
+                }
+            }
+            saveStations()
         } else {
-            stations = [
-                RadioStation(name: defaultStationName, url: defaultStreamURL)
-            ]
+            stations = defaultStations
             saveStations()
         }
         selectedStationIndex = min(
@@ -2463,10 +2531,15 @@ final class FStreamController: NSObject, NSApplicationDelegate, NSMenuDelegate, 
         alert.addButton(withTitle: "연결")
         alert.addButton(withTitle: "취소")
 
-        let input = NSTextField(frame: NSMakeRect(0, 0, 340, 24))
+        let input = FSTextField(frame: NSMakeRect(0, 0, 340, 24))
+        input.isEditable = true
+        input.isSelectable = true
+        input.allowsEditingTextAttributes = false
+        input.focusRingType = .default
         let curURL = stations.indices.contains(selectedStationIndex) ? stations[selectedStationIndex].url : defaultStreamURL
         input.stringValue = curURL
         alert.accessoryView = input
+        alert.window.initialFirstResponder = input
 
         NSApp.activate(ignoringOtherApps: true)
         if alert.runModal() == .alertFirstButtonReturn {
@@ -2486,15 +2559,20 @@ final class FStreamController: NSObject, NSApplicationDelegate, NSMenuDelegate, 
         alert.addButton(withTitle: "취소")
 
         let container = NSView(frame: NSMakeRect(0, 0, 340, 58))
-        let nameField = NSTextField(frame: NSMakeRect(0, 32, 340, 24))
+        let nameField = FSTextField(frame: NSMakeRect(0, 32, 340, 24))
+        nameField.isEditable = true
+        nameField.isSelectable = true
         nameField.placeholderString = "채널 이름 (예: Sky24 음악방송)"
-        nameField.stringValue = defaultStationName
-        let urlField = NSTextField(frame: NSMakeRect(0, 0, 340, 24))
-        urlField.placeholderString = "스트림 URL"
-        urlField.stringValue = defaultStreamURL
+        nameField.stringValue = ""
+        let urlField = FSTextField(frame: NSMakeRect(0, 0, 340, 24))
+        urlField.isEditable = true
+        urlField.isSelectable = true
+        urlField.placeholderString = "스트림 URL (예: https://.../listen.pls)"
+        urlField.stringValue = ""
         container.addSubview(nameField)
         container.addSubview(urlField)
         alert.accessoryView = container
+        alert.window.initialFirstResponder = nameField
 
         NSApp.activate(ignoringOtherApps: true)
         if alert.runModal() == .alertFirstButtonReturn {
@@ -2516,11 +2594,26 @@ final class FStreamController: NSObject, NSApplicationDelegate, NSMenuDelegate, 
         let quickItem = NSMenuItem(title: "간단히 연결하기...", action: #selector(showQuickOpenDialog), keyEquivalent: "o")
         quickItem.target = self
         appMenu.addItem(quickItem)
+        let addStationItem = NSMenuItem(title: "즐겨찾기 추가...", action: #selector(showAddStationDialog), keyEquivalent: "n")
+        addStationItem.target = self
+        appMenu.addItem(addStationItem)
         appMenu.addItem(.separator())
         appMenu.addItem(withTitle: "FStream 가리기", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h")
         appMenu.addItem(withTitle: "FStream 끝내기", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         appMenuItem.submenu = appMenu
         mainMenu.addItem(appMenuItem)
+
+        let editMenuItem = NSMenuItem(title: "편집", action: nil, keyEquivalent: "")
+        let editMenu = NSMenu(title: "편집")
+        editMenu.addItem(withTitle: "실행 취소", action: Selector(("undo:")), keyEquivalent: "z")
+        editMenu.addItem(withTitle: "다시 실행", action: Selector(("redo:")), keyEquivalent: "Z")
+        editMenu.addItem(.separator())
+        editMenu.addItem(withTitle: "오려두기", action: #selector(NSText.cut(_:)), keyEquivalent: "x")
+        editMenu.addItem(withTitle: "복사", action: #selector(NSText.copy(_:)), keyEquivalent: "c")
+        editMenu.addItem(withTitle: "붙여넣기", action: #selector(NSText.paste(_:)), keyEquivalent: "v")
+        editMenu.addItem(withTitle: "모두 선택", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
+        editMenuItem.submenu = editMenu
+        mainMenu.addItem(editMenuItem)
 
         let controlMenuItem = NSMenuItem(title: "제어", action: nil, keyEquivalent: "")
         controlMenuItem.submenu = buildFStreamMenu()
